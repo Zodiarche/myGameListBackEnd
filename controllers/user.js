@@ -16,12 +16,6 @@ export const loginUser = async (request, response) => {
 
     const token = jwt.sign({ userId: existingUser._id, email: existingUser.email, isAdmin: existingUser.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1y' });
 
-    response.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Strict',
-    });
-
     response.status(200).json({ message: 'Connexion réussie', token });
   } catch (error) {
     response.status(500).json({ message: error.message });
@@ -37,8 +31,10 @@ export const loginUser = async (request, response) => {
 export const getUserProfile = async (request, response) => {
   try {
     const requestUserData = request.userData;
+    console.log('request.userData', request.userData);
 
     const userDatabase = await user.findById(requestUserData.userId);
+    console.log('userDatabase', userDatabase);
     if (!userDatabase) return response.status(404).json({ message: 'Utilisateur non trouvé' });
 
     response.json(userDatabase);
@@ -222,13 +218,6 @@ export const deleteUser = async (request, response) => {
     const deletedUser = await user.findByIdAndDelete(request.params.id);
     if (!deletedUser) return response.status(404).json({ message: 'Utilisateur non trouvé' });
 
-    response.clearCookie('token', {
-      path: '/',
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Strict',
-    });
-
     response.json({ message: 'Utilisateur supprimé et token effacé' });
   } catch (error) {
     response.status(500).json({ message: error.message });
@@ -242,13 +231,6 @@ export const deleteUser = async (request, response) => {
  * @returns {Promise<void>}
  */
 export const logoutUser = async (_, response) => {
-  response.clearCookie('token', {
-    path: '/',
-    httpOnly: true,
-    secure: true,
-    sameSite: 'Strict',
-  });
-
   response.status(200).json({ message: 'Déconnexion réussie, token effacé.' });
 };
 

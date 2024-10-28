@@ -20,7 +20,7 @@ router.post('/login', loginUser);
 router.post('/logout', isAuthenticated, logoutUser);
 
 // Route protégée pour obtenir le profil de l'utilisateur
-router.get('/profile', getUserProfile);
+router.get('/profile', isAuthenticated, getUserProfile);
 
 // Récupération d'un user par ID
 router.get('/:id', isAuthenticated, getUserById);

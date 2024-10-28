@@ -10,8 +10,7 @@ dotenv.config();
  * @returns {Object|null} Les données décodées de l'utilisateur ou null si le token est invalide.
  */
 const getUserDataFromToken = (request) => {
-  const token = getTokenFromCookies(request.cookies);
-
+  const token = request.headers.authorization.split(' ')[1];
   if (!token) return null;
 
   try {
@@ -70,16 +69,6 @@ export const isSelfOrAdmin = (request, response, next) => {
 
   request.userData = userData;
   next();
-};
-
-/**
- * Extrait le token des cookies de la requête.
- *
- * @param {Object} cookies - Les cookies de la requête.
- * @returns {string|null} Le token ou null s'il n'est pas trouvé.
- */
-const getTokenFromCookies = (cookies) => {
-  return cookies?.token || null;
 };
 
 /**
